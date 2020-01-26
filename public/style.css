@@ -1,0 +1,23 @@
+
+html, body {
+    scroll-snap-type: both mandatory;
+}
+body {
+    margin: 0;
+}
+
+
+div.post {
+	width: 100%;
+    max-height: 100vh;
+	display: grid; 
+	grid-template-columns: 100%;
+    scroll-snap-align: start;
+    /* scroll-snap-stop: always; */
+	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 1));
+}
+
+.postVideo {
+	width: 100%;
+	max-height: 100vh;
+}
