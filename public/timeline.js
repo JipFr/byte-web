@@ -12,9 +12,13 @@ async function fetchTimeline() {
 
 	timelineCursor = data.data.cursor;
 
-	addPosts(data.data.posts);
-
 	posts = [...posts, ...data.data.posts];
+	accounts = {
+		...accounts,
+		...data.data.accounts
+	};
+
+	addPosts(data.data.posts);
 
 	console.log(data);
 
@@ -25,18 +29,28 @@ function addPosts(posts) {
 	for(let post of posts) {
 		let node = document.importNode(document.querySelector("template.post").content, true);
 
+		let author = accounts[post.authorID];
+		let name = author.displayName || `@${author.username}`;
+		node.querySelector(".userImg").src = author.avatarURL;
+		node.querySelector(".userDisplay").innerHTML = name + `<sup class="postTimeOffset">${getTimeoffset(post)}</sup>`;
+		
+		node.querySelector(".postCaption").innerHTML = post.caption;
+		node.querySelector(".likesSpan").innerHTML = post.likeCount;
+		node.querySelector(".likes").setAttribute("data-liked", post.likedByMe);
+		node.querySelector(".likes").setAttribute("data-post-id", post.id);
+
 		node.querySelector("video").src = post.videoSrc;
 		node.querySelector("video").poster = post.thumbSrc;
 
 		node.querySelector("video").load();
 		node.querySelector("video").pause();
 
+		node.querySelector(".likes").addEventListener("click", like);
+
 		document.querySelector(".posts").appendChild(node);
 	}
 
 	audioUnlock = true;
-
-	
 
 }
 
@@ -109,12 +123,33 @@ document.addEventListener("scroll", async () => {
 
 });
 
-document.addEventListener("keyup", evt => {
-	if(evt.key === "ArrowDown") {
-		evt.preventDefault();
-		console.log("STOP")
-	}
-});
+async function like(evt) {
+	let el = evt.currentTarget;
+	if(el.getAttribute("data-liked") === "true") return;
+
+	let postID = el.dataset.postId;
+	await fetch("/like?id=" + postID);
+	el.setAttribute("data-liked", true);
+	let likesSpan = el.querySelector(".likesSpan");
+	let currentLikes = Number(likesSpan.innerText);
+	likesSpan.innerText = currentLikes + 1;
+}
+
+function getTimeoffset(post) {
+	
+	let distance = Date.now() - (post.date * 1e3);
+
+	let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+	let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	
+	if(days > 0) return `${days}d`;
+	if(hours > 0) return `${hours}h`;
+	if(minutes > 0) return `${hours}m`;
+	if(seconds > 5) return `${seconds}s`;
+	return "Now";
+}
 
 async function init() {
 	fetchTimeline();

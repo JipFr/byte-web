@@ -3,9 +3,18 @@ html, body {
     scroll-snap-type: both mandatory;
 }
 body {
-    margin: 0;
+	margin: 0;
+	font-family: Arial;
+	background: black;
+	padding-bottom: 300px;
 }
 
+.posts {
+	display: grid;
+	grid-template-columns: 100%;
+	grid-gap: 5px;
+	background: black;
+}
 
 div.post {
 	width: 100%;
@@ -15,6 +24,66 @@ div.post {
     scroll-snap-align: start;
     /* scroll-snap-stop: always; */
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 1));
+	position: relative;
+	z-index: 1;
+}
+
+.postContent {
+	position: absolute;
+	bottom: 0;
+	padding: 20px;
+	color: rgba(255, 255, 255, 0.8);
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+	width: calc(100% - 40px);
+}
+
+.postContent .postCaption {
+	margin-bottom: 0;
+}
+
+.reaction {
+	display: grid;
+	grid-template-columns: 100%;
+	grid-gap: 4px;
+	justify-content: center;
+	justify-items: center;
+	align-items: center;
+}
+.reaction svg {
+	display: block;
+}
+.reaction[data-liked="true"] svg {
+	fill: red;
+	color: red;
+}
+.reaction span {
+	text-align: center;
+}
+
+.contentTop {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-gap: 10px;
+}
+
+.userSmall {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	grid-gap: 10px;
+	align-items: center;
+}
+.userSmall img {
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+	border: 1px solid white;
+}
+.userSmall h2 {
+	margin: 0;
+}
+.userSmall h2 .postTimeOffset {
+	color: rgba(255, 255, 255, 0.5);
+	margin-left: 10px;
 }
 
 .postVideo {
